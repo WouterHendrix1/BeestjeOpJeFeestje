@@ -1,0 +1,53 @@
+﻿@using BeestjeOpJeFeestje.Data.DatabaseModels
+@model Animal
+
+<div class="container">
+    <h2>Animal Details</h2>
+
+    <div class="mb-3">
+        <strong>Name:</strong> @Model.Name
+    </div>
+
+    <div class="mb-3">
+        <strong>Category:</strong> @Model.Type
+    </div>
+
+    <div class="mb-3">
+        <strong>Price:</strong> €@Model.Price.ToString("0.00")
+    </div>
+
+    <div class="mb-3">
+        <strong>Image:</strong><br />
+        <img src="@Model.ImageUrl" alt="Image of @Model.Name" class="img-fluid" style="max-width: 300px;" />
+    </div>
+
+    <h3>Booking History</h3>
+    @if (Model.Bookings.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model.Bookings)
+                {
+                    <tr>
+                        <td>@booking.Date.ToString("dd-MM-yyyy")</td>
+                        <td>@booking.Customer.Name</td>
+                        <td>@(booking.IsConfirmed ? "Confirmed" : "Pending")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No booking history available.</p>
+    }
+
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

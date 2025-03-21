@@ -1,0 +1,35 @@
+﻿@using BeestjeOpJeFeestje.Data.DatabaseModels
+@model IEnumerable<Customer>
+
+<h2>Klantenbeheer</h2>
+
+<a asp-action="Create" class="btn btn-primary">Nieuwe klant toevoegen</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Naam</th>
+            <th>Adres</th>
+            <th>E-mail</th>
+            <th>Telefoonnummer</th>
+            <th>Kortingskaart</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var klant in Model)
+        {
+            <tr>
+                <td>@klant.Name</td>
+                <td>@klant.Address</td>
+                <td>@klant.Email</td>
+                <td>@klant.PhoneNumber</td>
+                <td>@(klant.CustomerCard.ToString())</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@klant.Id" class="btn btn-warning">Bewerken</a>
+                    <a asp-action="Delete" asp-route-id="@klant.Id" class="btn btn-danger">Verwijderen</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

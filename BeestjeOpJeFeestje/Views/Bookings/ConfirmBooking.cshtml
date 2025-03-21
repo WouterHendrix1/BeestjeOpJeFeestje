@@ -1,0 +1,78 @@
+﻿@model BookingViewModel
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Main card -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4>Stap 4 - Controleer je gegevens</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Contact gegevens:</h5>
+                    @if (Model.PersonalData != null)
+                    {
+                        <p><strong>@Model.PersonalData.Name</strong></p>
+                        <p>@Model.PersonalData.Address</p>
+                        <p>@Model.PersonalData.Email</p>
+                    }
+                    else
+                    {
+                        <p>Geen persoonlijke gegevens verstrekt.</p>
+                    }
+
+                    <h5 class="mt-4">Prijs</h5>
+                    <ul>
+                        @foreach (var animal in Model.animals)
+                        {
+                            <li>@animal.Name: @animal.Price.ToString("C")</li>
+                        }
+                    </ul>
+                    <h5 class="mt-4">Korting</h5>
+                    <ul>
+                        @foreach (var discount in Model.Discounts)
+                        {
+                            <li>@discount</li>
+                        }
+                    </ul>
+
+                    <p class="mt-3"><strong>Totaal: <span style="font-size: 1.3em;">@Model.TotalPrice.ToString("C")</span></strong></p>
+
+                    <form asp-action="ConfirmBooking" method="post">
+                        <button type="submit" class="btn btn-primary">Boeking bevestigen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5>Boeking</h5>
+                </div>
+                <div class="card-body">
+                    <h5>Geselecteerde Datum</h5>
+                    <p>@Model.SelectedDate.ToShortDateString()</p>
+                    <hr>
+                    <h5>Geselecteerde Dieren</h5>
+                    <div class="animal-images">
+                        @foreach (var animal in Model.animals)
+                        {
+                            <img src="@animal.ImageUrl" alt="@animal.Name" class="animal-img" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animal-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin: 5px;
+        border: solid;
+    }
+</style>

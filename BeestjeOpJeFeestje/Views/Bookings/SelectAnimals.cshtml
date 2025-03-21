@@ -1,0 +1,75 @@
+﻿@using Newtonsoft.Json
+@model SelectAnimalsViewModel
+@{
+    var restrictions = new List<string>();
+    if (TempData["Restrictions"] != null)
+    {
+       restrictions = JsonConvert.DeserializeObject<List<string>>(TempData["Restrictions"] as string);
+    }
+}
+
+@if (restrictions.Any())
+{
+    <div class="alert alert-danger mt-4">
+        <h4>Let op!</h4>
+        <p>De volgende restricties zijn van toepassing:</p>
+        <ul>
+            @foreach (var restriction in restrictions)
+            {
+                <li>@restriction</li>
+            }
+        </ul>
+    </div>
+}
+
+<h2>Selecteer dieren voor je feestje</h2>
+<p>Kies de dieren die je wilt boeken. Niet-beschikbare dieren zijn uitgeschakeld.</p>
+
+<form method="post" asp-action="ConfirmAnimals">
+    <input type="hidden" name="selectedDate" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+
+    <div class="animal-list">
+        @for (int i = 0; i < Model.Animals.Count; i++)
+        {
+            <div class="animal-item @(Model.Animals[i].IsBooked ? "booked" : "")">
+                <label>
+                    <img src="@Model.Animals[i].ImageUrl" alt="@Model.Animals[i].Name" class="animal-img" />
+                    <input type="hidden" asp-for="Animals[i].Id" />
+
+                    @if (!Model.Animals[i].IsBooked)
+                    {
+                        <input type="checkbox" asp-for="Animals[i].IsSelected" />
+                    }
+                    @Model.Animals[i].Name (@Model.Animals[i].Type) - €@Model.Animals[i].Price
+                </label>
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Verder</button>
+</form>
+
+
+<style>
+    .animal-item {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .booked {
+        background-color: #ddd;
+        color: #777;
+        pointer-events: none;
+    }
+
+    .animal-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        display: block;
+        margin: 5px auto;
+    }
+</style>

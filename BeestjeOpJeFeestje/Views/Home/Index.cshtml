@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Welkom bij Beestje Op Je Feestje!";
+}
+
+<div class="container text-center mt-4">
+    @if (TempData["booking"] != null)
+    {
+        <div class="alert alert-success">
+            Je boeking is succesvol bevestigd! Als je een account hebt, kun je je boeking beheren onder het tabblad 'Boekingen'.
+        </div>
+    }
+    <h1>Beestje Op Je Feestje</h1>
+    <p class="lead">
+        Welkom! Hier kun je een dier boeken voor jouw feestje. Selecteer eerst een datum, en kies daarna uit de beschikbare dieren.
+    </p>
+    <p>
+        Houd er rekening mee dat:
+        <ul class="text-start d-inline-block">
+            <li>Een dier maar één dag per keer geboekt kan worden.</li>
+            <li>Dieren die al geboekt zijn op die datum niet meer beschikbaar zijn.</li>
+            <li>Je kunt een boeking maken als gast of inloggen met een klantaccount.</li>
+        </ul>
+    </p>
+    <p>
+        Kies hieronder een datum en start je boeking!
+    </p>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form asp-action="SelectDate" method="get">
+        <div class="form-group">
+            <label for="bookingDate" class="fw-bold">Kies een datum:</label>
+            <input class="col-3" type="date" id="bookingDate" name="bookingDate" class="form-control" required min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Beschikbare dieren bekijken</button>
+    </form>
+</div>

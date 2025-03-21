@@ -1,0 +1,49 @@
+﻿@model BeestjeOpJeFeestje.Data.DatabaseModels.Customer
+
+@{
+    ViewData["Title"] = "Klant bewerken";
+}
+
+<h2>Nieuwe klant aanmaken</h2>
+
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Naam</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">E-mail</label>
+        <input asp-for="Email" type="email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label">Telefoonnummer</label>
+        <input asp-for="PhoneNumber" type="tel" class="form-control" required />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Adres</label>
+        <input asp-for="Address" class="form-control" required />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerCard" class="form-label">Klantenkaart</label>
+        <select asp-for="CustomerCard" class="form-control" asp-items="@(new SelectList(ViewBag.CustomerCards))">
+            <option value="">-- Selecteer een klantenkaart --</option>
+        </select>
+        <span asp-validation-for="CustomerCard" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Klant bewerken</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

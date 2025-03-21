@@ -1,0 +1,33 @@
+﻿@using BeestjeOpJeFeestje.Data.DatabaseModels
+@model IEnumerable<Animal>
+
+<h2>Animals</h2>
+<a asp-action="Create" class="btn btn-primary">Create New</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var animal in Model)
+        {
+            <tr>
+                <td>@animal.Name</td>
+                <td>@animal.Type</td>
+                <td>@animal.Price.ToString("C")</td>
+                <td><img src="@animal.ImageUrl" alt="Image" width="100"></td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@animal.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@animal.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Details" asp-route-id="@animal.Id" class=" btn btn-success">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

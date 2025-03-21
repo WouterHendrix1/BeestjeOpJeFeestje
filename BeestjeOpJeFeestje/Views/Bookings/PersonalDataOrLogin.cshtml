@@ -1,0 +1,51 @@
+﻿@model PersonalDataViewModel
+
+<h2>Vul je persoonlijke gegevens in of log in</h2>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>Je bent al ingelogd als @User.Identity.Name</p>
+    <form method="post" asp-action="SubmitPersonalData">
+        <input type="hidden" asp-for="Email" value="@User.Identity" />
+        <button type="submit" class="btn btn-primary">Verder</button>
+    </form>
+}
+else
+{
+    <div>
+        <h3>Ga verder als gast</h3>
+        <form method="post" asp-action="SubmitPersonalData">
+            <div>
+                <label for="FirstName">Voornaam</label>
+                <input type="text" id="Name" asp-for="Name" />
+            <div>
+                <label for="Email">Email</label>
+                <input type="email" id="Email" asp-for="Email" />
+            </div>
+            <div>
+                <label for="PhoneNumber">Telefoonnummer</label>
+                <input type="text" id="PhoneNumber" asp-for="PhoneNumber" />
+            </div>
+                <div>
+                    <label for="Address">Adres</label>
+                    <input type="text" id="Adress" asp-for="Address" />
+                </div>
+            <button type="submit" class="btn btn-primary">Verder</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Log in</h3>
+        <form method="post" asp-action="Login">
+            <div>
+                <label for="Email">Email</label>
+                <input type="email" id="Email" name="Email" />
+            </div>
+            <div>
+                <label for="Password">Wachtwoord</label>
+                <input type="password" id="Password" name="Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
+    </div>
+}
