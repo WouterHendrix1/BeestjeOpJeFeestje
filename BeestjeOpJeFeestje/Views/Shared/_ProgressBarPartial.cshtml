@@ -1,0 +1,25 @@
+﻿@model int
+
+@{
+    var title = "Boekingsproces";
+    var steps = new List<string> { "Selecteer Dieren", "Persoonlijke Gegevens", "Bevestiging" };
+    var stepCount = steps.Count;
+    var stepWidth = 100 / stepCount;
+}
+
+<h3>@title</h3>
+
+<div class="progress mb-3">
+    <div class="progress-bar" role="progressbar" style="width: @Model%;" aria-valuenow="@Model" aria-valuemin="0" aria-valuemax="100">
+        @Model%
+    </div>
+</div>
+
+<div class="d-flex justify-content-between">
+    @foreach (var step in steps)
+    {
+        <div style="width: @stepWidth%; text-align: center;">
+            @step
+        </div>
+    }
+</div>
