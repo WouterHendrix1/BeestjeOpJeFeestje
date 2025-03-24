@@ -2,10 +2,16 @@
 @model List<Booking>
 
 @{
-    ViewData["Title"] = "Mijn Boekingen";
+    ViewData["Title"] = "Boekingen";
 }
+<link rel="stylesheet" href="~/css/site.css" />
 
-<h2 class="my-4">Mijn Boekingen</h2>
+
+@if (User.IsInRole("Admin")){
+    <h2 class="my-4">Beheer Boekingen</h2>
+}else{
+    <h2 class="my-4">Mijn Boekingen</h2>
+}
 
 <table class="table table-striped table-hover">
     <thead class="table-dark">
@@ -13,7 +19,12 @@
             <th>Datum</th>
             <th>Dieren</th>
             <th>Totaalprijs</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Klant</th>
+            }
             <th>Acties</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -33,6 +44,10 @@
                     </div>
                 </td>
                 <td>@booking.TotalPrice.ToString("C")</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>@booking.Customer.Email</td>
+                }
                 <td>
                     <form asp-action="Delete" method="post" asp-route-id="@booking.Id" onsubmit="return confirm('Weet je zeker dat je deze boeking wilt verwijderen?');">
                         <button type="submit" class="btn btn-danger">Verwijderen</button>
@@ -42,16 +57,3 @@
         }
     </tbody>
 </table>
-
-<style>
-    .animal-card {
-        width: 150px;
-        text-align: center;
-    }
-
-    .animal-img {
-        width: 100%;
-        height: 100px;
-        object-fit: cover;
-    }
-</style>

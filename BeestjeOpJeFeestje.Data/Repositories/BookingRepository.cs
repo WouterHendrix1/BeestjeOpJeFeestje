@@ -32,9 +32,9 @@ namespace BeestjeOpJeFeestje.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<Booking>> GetAllAsync()
+        public async Task<List<Booking>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Bookings.Include(b => b.Animals).Include(b => b.Customer).ToListAsync();
         }
 
         public async Task<IEnumerable<Animal>> GetBookedAnimalsByDateAsync(DateTime selectedDate)

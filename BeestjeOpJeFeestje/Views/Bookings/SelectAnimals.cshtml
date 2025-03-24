@@ -4,9 +4,13 @@
     var restrictions = new List<string>();
     if (TempData["Restrictions"] != null)
     {
-       restrictions = JsonConvert.DeserializeObject<List<string>>(TempData["Restrictions"] as string);
+        restrictions = JsonConvert.DeserializeObject<List<string>>(TempData["Restrictions"] as string);
+    }
+    if (TempData["Error"] != null){
+        restrictions.Add(TempData["Error"] as string);
     }
 }
+<link rel="stylesheet" href="~/css/site.css" />
 
 @if (restrictions.Any())
 {
@@ -33,7 +37,7 @@
         {
             <div class="animal-item @(Model.Animals[i].IsBooked ? "booked" : "")">
                 <label>
-                    <img src="@Model.Animals[i].ImageUrl" alt="@Model.Animals[i].Name" class="animal-img" />
+                    <img src="@Model.Animals[i].ImageUrl" alt="@Model.Animals[i].Name" class="animal-img-select" />
                     <input type="hidden" asp-for="Animals[i].Id" />
 
                     @if (!Model.Animals[i].IsBooked)
@@ -50,26 +54,4 @@
 </form>
 
 
-<style>
-    .animal-item {
-        padding: 10px;
-        margin: 5px;
-        border: 1px solid #ccc;
-        display: inline-block;
-        text-align: center;
-    }
 
-    .booked {
-        background-color: #ddd;
-        color: #777;
-        pointer-events: none;
-    }
-
-    .animal-img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        display: block;
-        margin: 5px auto;
-    }
-</style>

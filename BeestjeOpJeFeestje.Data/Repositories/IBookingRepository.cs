@@ -9,7 +9,7 @@ namespace BeestjeOpJeFeestje.Data.Repositories
 {
     public interface IBookingRepository
     {
-        Task<IEnumerable<Booking>> GetAllAsync();
+        Task<List<Booking>> GetAllAsync();
         Task<Booking> GetByIdAsync(int id);
         Task AddAsync(Booking booking);
         Task UpdateAsync(Booking booking);

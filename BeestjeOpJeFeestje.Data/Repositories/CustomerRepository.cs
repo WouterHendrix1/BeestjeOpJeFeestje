@@ -37,9 +37,9 @@ namespace BeestjeOpJeFeestje.Data.Repositories
         {
             await _userManager.CreateAsync(user, password);
             await _userManager.AddToRoleAsync(user, "Customer");
-            customer.UserId = user.Id;
+            customer.User = user;
 
-            await _context.Customers.AddAsync(customer);
+            _context.Customers.Update(customer);
             await _context.SaveChangesAsync();
         }
 

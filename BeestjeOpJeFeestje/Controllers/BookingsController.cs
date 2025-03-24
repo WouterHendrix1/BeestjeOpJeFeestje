@@ -28,14 +28,23 @@ namespace BeestjeOpJeFeestje.Controllers
             _bookingService = bookingService;
         }
 
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer,Admin")]
         public async Task<IActionResult> Index()
         {
             List<Booking> bookings = new List<Booking>();
            
-                var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Customer"))
+            {
                 var customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
                 bookings = await _bookingRepository.GetBookingsByCustomerIdAsync(customer.Id);
+            }
+            else if (roles.Contains("Admin"))
+            {
+                bookings = (await _bookingRepository.GetAllAsync()).ToList();
+            }
             
 
             return View(bookings);
@@ -66,10 +75,6 @@ namespace BeestjeOpJeFeestje.Controllers
             return RedirectToAction("Index");
         }
 
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> SelectAnimals(DateTime date)
         {
@@ -98,6 +103,12 @@ namespace BeestjeOpJeFeestje.Controllers
         public async Task<IActionResult> ConfirmAnimals(SelectAnimalsViewModel viewModel)
         {
             var selectedAnimals = viewModel.Animals.Where(a => a.IsSelected).Select(a => a.Id).ToList();
+            if (!selectedAnimals.Any())
+            {
+                TempData["Error"] = "Selecteer minstens 1 dier";
+                return RedirectToAction("SelectAnimals", viewModel.SelectedDate);
+            }
+
             var booking = new BookingViewModel
             {
                 SelectedDate = viewModel.SelectedDate,
@@ -151,7 +162,8 @@ namespace BeestjeOpJeFeestje.Controllers
             }
             else
             {
-                return RedirectToAction("SelectAnimals");
+                TempData["ErrorMessage"] = "Er is iets fout gegaan, probeer het opnieuw";
+                return RedirectToAction("Index", "Home");
             }
 
             // Check of de gebruiker is ingelogd
