@@ -100,7 +100,7 @@ public class BookingService : IBookingService
     }
 
 
-    private decimal ApplySameTypeDiscount(List<Animal> animals, List<string> discountDetails)
+    public decimal ApplySameTypeDiscount(List<Animal> animals, List<string> discountDetails)
     {
         if (animals.GroupBy(a => a.Type).Any(g => g.Count() >= 3))
         {
@@ -110,7 +110,7 @@ public class BookingService : IBookingService
         return 0m;
     }
 
-    private decimal ApplyDuckDiscount(List<Animal> animals, List<string> discountDetails)
+    public decimal ApplyDuckDiscount(List<Animal> animals, List<string> discountDetails)
     {
         if (animals.Any(a => a.Name.Contains("Eend", StringComparison.OrdinalIgnoreCase)))
         {
@@ -124,7 +124,7 @@ public class BookingService : IBookingService
         return 0m;
     }
 
-    private decimal ApplyDayOfWeekDiscount(DateTime selectedDate, List<string> discountDetails)
+    public decimal ApplyDayOfWeekDiscount(DateTime selectedDate, List<string> discountDetails)
     {
         if (selectedDate.DayOfWeek == DayOfWeek.Monday || selectedDate.DayOfWeek == DayOfWeek.Tuesday)
         {
@@ -134,7 +134,7 @@ public class BookingService : IBookingService
         return 0m;
     }
 
-    private decimal ApplyLetterDiscount(List<Animal> animals, List<string> discountDetails)
+    public decimal ApplyLetterDiscount(List<Animal> animals, List<string> discountDetails)
     {
         decimal discountPercentage = 0m;
         string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -158,7 +158,7 @@ public class BookingService : IBookingService
         return discountPercentage;
     }
 
-    private decimal ApplyCustomerCardDiscount(Customer customer, List<string> discountDetails)
+    public decimal ApplyCustomerCardDiscount(Customer customer, List<string> discountDetails)
     {
         if (customer?.CustomerCard != CustomerCard.None)
         {
