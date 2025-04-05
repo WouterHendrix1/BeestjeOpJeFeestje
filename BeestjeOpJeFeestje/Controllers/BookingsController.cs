@@ -103,11 +103,6 @@ namespace BeestjeOpJeFeestje.Controllers
         public async Task<IActionResult> ConfirmAnimals(SelectAnimalsViewModel viewModel)
         {
             var selectedAnimals = viewModel.Animals.Where(a => a.IsSelected).Select(a => a.Id).ToList();
-            if (!selectedAnimals.Any())
-            {
-                TempData["Error"] = "Selecteer minstens 1 dier";
-                return RedirectToAction("SelectAnimals", viewModel.SelectedDate);
-            }
 
             var booking = new BookingViewModel
             {

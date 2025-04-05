@@ -182,6 +182,7 @@ public class BookingService : IBookingService
                 return 50m;
             }
         }
+        discountDetails.Add("Pech, geen korting voor 'Eend'!");
         return 0m;
     }
 

@@ -52,6 +52,10 @@ namespace BeestjeOpJeFeestje.Tests
             {
                 Assert.Contains("Geluk! 50% korting voor 'Eend'", discountDetails);
             }
+            else
+            {
+                Assert.Contains("Pech, geen korting voor 'Eend'!", discountDetails);
+            }
         }
 
         [Fact]

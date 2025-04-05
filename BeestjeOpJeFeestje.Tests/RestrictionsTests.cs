@@ -21,7 +21,7 @@ namespace BeestjeOpJeFeestje.Tests
             _mockBookingService = new Mock<IBookingService>();
             _bookingService = new BookingService();
         }
-
+  
         [Fact]
         public void CheckEmptyBooking_ShouldReturnError_WhenNoAnimals()
         {
