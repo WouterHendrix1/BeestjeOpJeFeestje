@@ -58,6 +58,8 @@ using (var scope = app.Services.CreateScope())
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var customerRepository = services.GetRequiredService<ICustomerRepository>();
     UserAndRoleSeeder.SeedData(userManager, roleManager, customerRepository);
+    var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    context.Database.Migrate();
 }
 
 app.UseAuthorization();
