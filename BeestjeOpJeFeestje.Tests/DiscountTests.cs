@@ -1,23 +1,15 @@
 ﻿using BeestjeOpJeFeestje.Data;
 using BeestjeOpJeFeestje.Data.DatabaseModels;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace BeestjeOpJeFeestje.Tests
 {
     public class DiscountTests
     {
-        private readonly Mock<IBookingService> _mockBookingService;
         private readonly BookingService _bookingService;
 
         public DiscountTests()
         {
-            _mockBookingService = new Mock<IBookingService>();
             _bookingService = new BookingService();
         }
 
@@ -83,8 +75,7 @@ namespace BeestjeOpJeFeestje.Tests
             // Arrange
             var animals = new List<Animal>
                 {
-                    new Animal { Name = "Aap", Price = 100 },
-                    new Animal { Name = "Beer", Price = 100 }
+                    new Animal { Name = "ABCDEFG", Price = 100 },
                 };
             var discountDetails = new List<string>();
 
@@ -92,8 +83,8 @@ namespace BeestjeOpJeFeestje.Tests
             var discount = _bookingService.ApplyLetterDiscount(animals, discountDetails);
 
             // Assert
-            Assert.Equal(4m, discount);
-            Assert.Contains("Dierenamen: 4", discountDetails);
+            Assert.Equal(14m, discount);
+            Assert.Contains("Dierenamen: 14", discountDetails);
         }
 
         [Fact]

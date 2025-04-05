@@ -33,50 +33,103 @@ public class BookingService : IBookingService
 
     public List<string> GetAnimalRestrictions(BookingViewModel booking, Customer customer)
     {
-        List<string> restrictions = new List<string>();
+        var restrictions = new List<string>();
+
+        string? result;
+
+        result = CheckEmptyBooking(booking);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckConflictingAnimals(booking);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckWeekendPenguinRestriction(booking);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckDesertAnimalMonthRestriction(booking);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckSnowAnimalMonthRestriction(booking);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckMaxAnimalsRestriction(booking, customer);
+        if (result != null) restrictions.Add(result);
+
+        result = CheckVipAnimalRestriction(booking, customer);
+        if (result != null) restrictions.Add(result);
+
+        return restrictions;
+    }
+
+    public string? CheckEmptyBooking(BookingViewModel booking)
+    {
+        return booking.animals.Count == 0
+            ? "Je moet minimaal 1 beestje boeken."
+            : null;
+    }
+
+    public string? CheckConflictingAnimals(BookingViewModel booking)
+    {
         var animals = booking.animals;
 
-        //Check for empty booking
-        if (animals.Count == 0)
-        {
-            restrictions.Add("Je moet minimaal 1 beestje boeken.");
-            return restrictions;
-        }
-
-        // Check for conflicting animal types
         bool hasFarmAnimal = animals.Any(a => a.Type == AnimalType.Farm);
-        bool hasLionOrPolarBear = animals.Any(a => a.Name.Contains("Leeuw", StringComparison.OrdinalIgnoreCase) || a.Name.Contains("IJsbeer", StringComparison.OrdinalIgnoreCase));
+        bool hasLionOrPolarBear = animals.Any(a =>
+            a.Name.Contains("Leeuw", StringComparison.OrdinalIgnoreCase) ||
+            a.Name.Contains("IJsbeer", StringComparison.OrdinalIgnoreCase));
 
         if (hasFarmAnimal && hasLionOrPolarBear)
         {
-            restrictions.Add("Nom nom nom: Je mag geen beestje boeken met het type ‘Leeuw’ of ‘IJsbeer’ als je ook een beestje boekt van het type ‘Boerderijdier’.");
+            return "Nom nom nom: Je mag geen beestje boeken met het type ‘Leeuw’ of ‘IJsbeer’ als je ook een beestje boekt van het type ‘Boerderijdier’.";
         }
 
-        // Check for booking restrictions based on the day of the week
-        bool isWeekend = booking.SelectedDate.DayOfWeek == DayOfWeek.Saturday || booking.SelectedDate.DayOfWeek == DayOfWeek.Sunday;
-        bool hasPenguin = animals.Any(a => a.Name.Contains("Pinguïn", StringComparison.OrdinalIgnoreCase));
+        return null;
+    }
+
+    public string? CheckWeekendPenguinRestriction(BookingViewModel booking)
+    {
+        var animals = booking.animals;
+        bool isWeekend = booking.SelectedDate.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+        bool hasPenguin = animals.Any(a =>
+            a.Name.Contains("Pinguïn", StringComparison.OrdinalIgnoreCase));
 
         if (isWeekend && hasPenguin)
         {
-            restrictions.Add("Dieren in pak werken alleen doordeweeks: Je mag geen beestje boeken met de naam ‘Pinguïn’ in het weekend.");
+            return "Dieren in pak werken alleen doordeweeks: Je mag geen beestje boeken met de naam ‘Pinguïn’ in het weekend.";
         }
 
-        // Check for booking restrictions based on the month
+        return null;
+    }
+
+    public string? CheckDesertAnimalMonthRestriction(BookingViewModel booking)
+    {
+        var animals = booking.animals;
         int month = booking.SelectedDate.Month;
-        bool hasDesertAnimal = animals.Any(a => a.Type == AnimalType.Desert);
-        bool hasSnowAnimal = animals.Any(a => a.Type == AnimalType.Snow);
 
-        if ((month >= 10 || month <= 2) && hasDesertAnimal)
+        if ((month >= 10 || month <= 2) && animals.Any(a => a.Type == AnimalType.Desert))
         {
-            restrictions.Add("Brrrr – Veelste koud: Je mag geen beestje boeken van het type ‘Woestijn’ in de maanden oktober t/m februari.");
+            return "Brrrr – Veelste koud: Je mag geen beestje boeken van het type ‘Woestijn’ in de maanden oktober t/m februari.";
         }
 
-        if ((month >= 6 && month <= 8) && hasSnowAnimal)
+        return null;
+    }
+
+    public string? CheckSnowAnimalMonthRestriction(BookingViewModel booking)
+    {
+        var animals = booking.animals;
+        int month = booking.SelectedDate.Month;
+
+        if ((month >= 6 && month <= 8) && animals.Any(a => a.Type == AnimalType.Snow))
         {
-            restrictions.Add("Some People Are Worth Melting For. ~ Olaf: Je mag geen beestje boeken van het type ‘Sneeuw’ in de maanden juni t/m augustus.");
+            return "Some People Are Worth Melting For. ~ Olaf: Je mag geen beestje boeken van het type ‘Sneeuw’ in de maanden juni t/m augustus.";
         }
 
-        // Check for customer card restrictions
+        return null;
+    }
+
+    public string? CheckMaxAnimalsRestriction(BookingViewModel booking, Customer customer)
+    {
+        var animals = booking.animals;
+
         int maxAnimals = customer.CustomerCard switch
         {
             CustomerCard.None => 3,
@@ -88,15 +141,23 @@ public class BookingService : IBookingService
 
         if (animals.Count > maxAnimals)
         {
-            restrictions.Add($"Je mag maximaal {maxAnimals} dieren boeken.");
+            return $"Je mag maximaal {maxAnimals} dieren boeken.";
         }
 
-        if (customer.CustomerCard != CustomerCard.Platinum && animals.Any(a => a.Type == AnimalType.VIP))
+        return null;
+    }
+
+    public string? CheckVipAnimalRestriction(BookingViewModel booking, Customer customer)
+    {
+        var animals = booking.animals;
+
+        if (customer.CustomerCard != CustomerCard.Platinum &&
+            animals.Any(a => a.Type == AnimalType.VIP))
         {
-            restrictions.Add("Alleen klanten met een platina kaart mogen VIP dieren boeken.");
+            return "Alleen klanten met een platina kaart mogen VIP dieren boeken.";
         }
 
-        return restrictions;
+        return null;
     }
 
 
