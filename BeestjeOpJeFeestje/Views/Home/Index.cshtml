@@ -3,6 +3,15 @@
 }
 
 
+@if(TempData["admin"] != null){
+    
+    <div class="container text-center mt-4">
+        <h1>Welkom Admin!</h1>
+        <p class="lead">
+            Je hebt toegang tot de admin paginas. Hier kun je dieren beheren, boekingen bekijken en meer.
+        </p>
+    </div>
+}else{
 <div class="container text-center mt-4">
     @if (TempData["booking"] != null)
     {
@@ -41,3 +50,4 @@
         <button type="submit" class="btn btn-primary mt-3">Beschikbare dieren bekijken</button>
     </form>
 </div>
+}

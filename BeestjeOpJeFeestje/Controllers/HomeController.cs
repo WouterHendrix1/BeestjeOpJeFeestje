@@ -8,6 +8,11 @@ namespace BeestjeOpJeFeestje.Controllers
     {
         public IActionResult Index()
         {
+            // check if user has admin role
+            if (User.IsInRole("Admin"))
+            {
+                TempData["Admin"] = true;
+            }
             return View();
         }
 
