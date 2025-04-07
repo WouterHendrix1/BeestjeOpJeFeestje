@@ -1,5 +1,6 @@
 ﻿using BeestjeOpJeFeestje.Data;
 using BeestjeOpJeFeestje.Data.DatabaseModels;
+using BeestjeOpJeFeestje.Models;
 using Xunit;
 
 namespace BeestjeOpJeFeestje.Tests.ServicesTests
@@ -12,6 +13,58 @@ namespace BeestjeOpJeFeestje.Tests.ServicesTests
         {
             _bookingService = new BookingService();
         }
+
+        [Fact]
+        public void CalculateDiscount_ShouldReturnZero_WhenNoDiscountsApplied()
+        {
+            // Arrange
+            var animals = new List<Animal>
+                {
+                    new Animal { Price = 100 },
+                    new Animal { Price = 200 }
+                };
+            var booking = new BookingViewModel
+            {
+                animals = animals,
+                SelectedDate = new DateTime(2025, 3, 15) // Saturday
+            };
+            var customer = new Customer { CustomerCard = CustomerCard.None };
+
+            
+            // Act
+            var finalPrice= _bookingService.CalculateDiscount(booking, customer).finalPrice;
+
+            // Assert
+            Assert.Equal(300m, finalPrice);
+        }
+
+        [Fact]
+        public void CalculateDiscount_ShouldReturnCorrectDiscount_WhenMultipleDiscountsApplied()
+        {
+            // Arrange
+            var animals = new List<Animal>
+                {
+                    new Animal { Type = AnimalType.Farm, Price = 100 },
+                    new Animal { Type = AnimalType.Farm, Price = 0 },
+                    new Animal { Type = AnimalType.Farm, Price = 0 }
+                };
+            var booking = new BookingViewModel
+            {
+                animals = animals,
+                SelectedDate = new DateTime(2025, 3, 17) // Monday
+            };
+            var customer = new Customer { CustomerCard = CustomerCard.Gold };
+            // Act
+            var (finalPrice, discountDetails) = _bookingService.CalculateDiscount(booking, customer);
+            // Assert
+            Assert.Equal(65, finalPrice);
+            Assert.Contains("3 dieren van hetzelfde type: 10% korting", discountDetails);
+            Assert.Contains("Boeking op maandag of dinsdag: 15% korting", discountDetails);
+            Assert.Contains("Klantenkaart: 10% korting", discountDetails);
+        }
+
+
+
 
         [Fact]
         public void ApplySameTypeDiscount_ShouldApplyDiscount_WhenThreeOrMoreSameType()

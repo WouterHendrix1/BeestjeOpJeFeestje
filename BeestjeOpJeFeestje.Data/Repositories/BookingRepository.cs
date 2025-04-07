@@ -39,7 +39,8 @@ namespace BeestjeOpJeFeestje.Data.Repositories
 
         public async Task<IEnumerable<Animal>> GetBookedAnimalsByDateAsync(DateTime selectedDate)
         {
-            var bookings = _context.Bookings.Where(b => b.Date == selectedDate);
+            var dateOnly = selectedDate.Date;
+            var bookings = _context.Bookings.Where(b => b.Date == dateOnly);
             var animals = await bookings.SelectMany(b => b.Animals).ToListAsync();
             return animals;
         }
@@ -54,11 +55,6 @@ namespace BeestjeOpJeFeestje.Data.Repositories
         {
             var booking = await _context.Bookings.FindAsync(id);
             return booking;
-        }
-
-        public Task UpdateAsync(Booking booking)
-        {
-            throw new NotImplementedException();
         }
     }
 }

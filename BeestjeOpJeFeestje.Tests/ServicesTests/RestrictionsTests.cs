@@ -23,6 +23,47 @@ namespace BeestjeOpJeFeestje.Tests.ServicesTests
         }
 
         [Fact]
+        public void GetAnimalRestrictions_ShouldReturnCorrectRestrictions_WhenCalled()
+        {
+
+            // Arrange
+            Customer customer = new Customer { CustomerCard = CustomerCard.None };
+
+            var booking = new BookingViewModel
+            {
+                animals = new List<Animal>
+                {
+                    new Animal { Type = AnimalType.Farm },
+                    new Animal { Name = "Leeuw" }
+                }
+            };
+            // Act
+            var result = _bookingService.GetAnimalRestrictions(booking, customer);
+            // Assert
+            Assert.NotNull(result);
+            Assert.Contains("Nom nom nom: Je mag geen beestje boeken met het type ‘Leeuw’ of ‘IJsbeer’ als je ook een beestje boekt van het type ‘Boerderijdier’.", result);
+        }
+
+        [Fact]
+        public void GetAnimalRestrictions_ShouldReturnEmptyList_WhenNoRestrictions()
+        {
+            // Arrange
+            var customer = new Customer { CustomerCard = CustomerCard.None };
+            var booking = new BookingViewModel
+            {
+                animals = new List<Animal>
+                {
+                    new Animal { Type = AnimalType.Farm },
+                    new Animal { Name = "Tiger" }
+                }
+            };
+            // Act
+            var result = _bookingService.GetAnimalRestrictions(booking, customer);
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
         public void CheckEmptyBooking_ShouldReturnError_WhenNoAnimals()
         {
             // Arrange

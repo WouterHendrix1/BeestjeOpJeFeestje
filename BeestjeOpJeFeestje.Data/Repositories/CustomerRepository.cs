@@ -59,10 +59,7 @@ namespace BeestjeOpJeFeestje.Data.Repositories
             }
         }
 
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Customers.AnyAsync(a => a.Id == id);
-        }
+  
 
         public async Task AddCustomerAsync(Customer customer)
         {

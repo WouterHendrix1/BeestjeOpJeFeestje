@@ -12,5 +12,4 @@ public interface IAnimalRepository
     Task AddAsync(Animal animal);
     Task UpdateAsync(Animal animal);
     Task DeleteAsync(int id);
-    Task<bool> ExistsAsync(int id);
 }

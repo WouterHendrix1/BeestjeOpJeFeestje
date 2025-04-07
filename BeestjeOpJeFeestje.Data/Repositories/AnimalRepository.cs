@@ -58,10 +58,5 @@ namespace BeestjeOpJeFeestje.Data.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Animals.AnyAsync(a => a.Id == id);
-        }
     }
 }

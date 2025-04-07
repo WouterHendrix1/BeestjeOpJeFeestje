@@ -13,5 +13,4 @@ public interface ICustomerRepository
     Task<Customer> GetCustomerByUserIdAsync(string userId);
     Task UpdateAsync(Customer customer);
     Task DeleteAsync(int id);
-    Task<bool> ExistsAsync(int id);
 }
