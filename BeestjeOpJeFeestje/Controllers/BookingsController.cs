@@ -117,7 +117,7 @@ namespace BeestjeOpJeFeestje.Controllers
             if (User?.Identity?.IsAuthenticated == true)
             {
                 var user = await _userManager.GetUserAsync(User);
-                customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
+                customer = await _customerRepository.GetCustomerByUserIdAsync(user!.Id);
             }
 
             var restrictions = _bookingService.GetAnimalRestrictions(booking, customer);
