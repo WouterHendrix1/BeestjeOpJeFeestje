@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace BeestjeOpJeFeestje.Tests
+namespace BeestjeOpJeFeestje.Tests.ServicesTests
 {
     public class RestrictionsTests
     {
@@ -21,7 +21,7 @@ namespace BeestjeOpJeFeestje.Tests
             _mockBookingService = new Mock<IBookingService>();
             _bookingService = new BookingService();
         }
-  
+
         [Fact]
         public void CheckEmptyBooking_ShouldReturnError_WhenNoAnimals()
         {

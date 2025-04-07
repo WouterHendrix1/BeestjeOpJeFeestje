@@ -1,6 +1,13 @@
-﻿@model PersonalDataViewModel
+﻿@model CombinedPDViewModel
 
 @await Html.PartialAsync("_ProgressBarPartial", 50)
+
+@if(TempData["ErrorMessage"] != null){
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 
 <h2 class="my-4">Vul je persoonlijke gegevens in of log in</h2>
 
@@ -8,7 +15,7 @@
 {
     <p>Je bent al ingelogd als @User.Identity.Name</p>
     <form method="post" asp-action="SubmitPersonalData">
-        <input type="hidden" asp-for="Email" value="@User.Identity" />
+        <input type="hidden" asp-for="LoginViewModel.Email" value="@User.Identity" />
         <button type="submit" class="btn btn-primary">Verder</button>
     </form>
 }
@@ -23,20 +30,24 @@ else
                 <div class="card-body">
                     <form method="post" asp-action="SubmitPersonalData">
                         <div class="mb-3">
-                            <label for="Name" class="form-label">Voornaam</label>
-                            <input type="text" id="Name" asp-for="Name" class="form-control" />
+                            <label asp-for="PersonalDataViewModel.Name" class="form-label">Naam</label>
+                            <input type="text" id="GuestName" asp-for="PersonalDataViewModel.Name" class="form-control" />
+                            <span asp-validation-for="PersonalDataViewModel.Name" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="Email" class="form-label">Email</label>
-                            <input type="email" id="Email" asp-for="Email" class="form-control" />
+                            <label asp-for="PersonalDataViewModel.Email" class="form-label">Email</label>
+                            <input type="email" id="GuestEmail" asp-for="PersonalDataViewModel.Email" class="form-control" />
+                            <span asp-validation-for="PersonalDataViewModel.Email" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="PhoneNumber" class="form-label">Telefoonnummer</label>
-                            <input type="text" id="PhoneNumber" asp-for="PhoneNumber" class="form-control" />
+                            <label asp-for="PersonalDataViewModel.PhoneNumber" class="form-label">Telefoonnummer</label>
+                            <input type="text" id="GuestPhoneNumber" asp-for="PersonalDataViewModel.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PersonalDataViewModel.PhoneNumber" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="Address" class="form-label">Adres</label>
-                            <input type="text" id="Address" asp-for="Address" class="form-control" />
+                            <label asp-for="PersonalDataViewModel.Address" class="form-label">Adres</label>
+                            <input type="text" id="GuestAddress" asp-for="PersonalDataViewModel.Address" class="form-control" />
+                            <span asp-validation-for="PersonalDataViewModel.Address" class="text-danger"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Verder</button>
                     </form>
@@ -51,13 +62,16 @@ else
                 </div>
                 <div class="card-body">
                     <form method="post" asp-action="Login">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="mb-3">
-                            <label for="Email" class="form-label">Email</label>
-                            <input type="email" id="Email" name="Email" class="form-control" />
+                            <label asp-for="LoginViewModel.Email" class="form-label">Email</label>
+                            <input type="email" id="Email" asp-for="LoginViewModel.Email" class="form-control" />
+                            <span asp-validation-for="LoginViewModel.Email" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="Password" class="form-label">Wachtwoord</label>
-                            <input type="password" id="Password" name="Password" class="form-control" />
+                            <label asp-for="LoginViewModel.Password" class="form-label">Wachtwoord</label>
+                            <input type="password" id="Password" asp-for="LoginViewModel.Password" class="form-control" />
+                            <span asp-validation-for="LoginViewModel.Password" class="text-danger"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Log in</button>
                     </form>
@@ -67,4 +81,6 @@ else
     </div>
 }
 
-
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

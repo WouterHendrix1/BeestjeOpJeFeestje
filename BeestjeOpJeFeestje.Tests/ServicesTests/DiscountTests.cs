@@ -2,7 +2,7 @@
 using BeestjeOpJeFeestje.Data.DatabaseModels;
 using Xunit;
 
-namespace BeestjeOpJeFeestje.Tests
+namespace BeestjeOpJeFeestje.Tests.ServicesTests
 {
     public class DiscountTests
     {

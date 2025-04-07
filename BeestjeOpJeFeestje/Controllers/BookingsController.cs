@@ -5,6 +5,7 @@ using BeestjeOpJeFeestje.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -34,11 +35,11 @@ namespace BeestjeOpJeFeestje.Controllers
             List<Booking> bookings = new List<Booking>();
            
             var user = await _userManager.GetUserAsync(User);
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user!);
 
             if (roles.Contains("Customer"))
             {
-                var customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
+                var customer = await _customerRepository.GetCustomerByUserIdAsync(user!.Id);
                 bookings = await _bookingRepository.GetBookingsByCustomerIdAsync(customer.Id);
             }
             else if (roles.Contains("Admin"))
@@ -55,7 +56,7 @@ namespace BeestjeOpJeFeestje.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
+            var customer = await _customerRepository.GetCustomerByUserIdAsync(user!.Id);
 
             if (customer == null)
             {
@@ -129,78 +130,16 @@ namespace BeestjeOpJeFeestje.Controllers
 
             TempData["Booking"] = JsonConvert.SerializeObject(booking);
 
-            return RedirectToAction("PersonalDataOrLogin");
+            return View("PersonalDataOrLogin", null);
         }
+
         [HttpGet]
-        public IActionResult PersonalDataOrLogin()
+        public IActionResult PersonalDataOrLogin(CombinedPDViewModel? _model)
         {
-            return View(new PersonalDataViewModel());
+            var model = _model == null ? new CombinedPDViewModel() : _model;
+            return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SubmitPersonalData(PersonalDataViewModel personalData)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("PersonalDataForm", personalData); // Geef het formulier opnieuw weer bij fouten
-            }
-
-            BookingViewModel booking = null;
-            Customer customer = null;
-
-            // Probeer booking uit TempData te halen
-            var bookingJson = TempData["Booking"] as string;
-            if (!string.IsNullOrEmpty(bookingJson))
-            {
-                booking = JsonConvert.DeserializeObject<BookingViewModel>(bookingJson);
-                TempData.Keep("Booking");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Er is iets fout gegaan, probeer het opnieuw";
-                return RedirectToAction("Index", "Home");
-            }
-
-            // Check of de gebruiker is ingelogd
-            if (User?.Identity?.IsAuthenticated == true)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
-
-                if (customer != null)
-                {
-                    personalData.Name = customer.Name;
-                    personalData.PhoneNumber = customer.PhoneNumber;
-                    personalData.Email = customer.Email;
-                }
-            }
-
-            // Als er geen ingelogde klant is, maak een nieuwe klant aan
-            if (customer == null)
-            {
-                customer = new Customer
-                {
-                    Name = personalData.Name,
-                    PhoneNumber = personalData.PhoneNumber,
-                    Email = personalData.Email,
-                    Address = personalData.Address,
-                    CustomerCard = CustomerCard.None
-                };
-                await _customerRepository.AddCustomerAsync(customer);
-            }
-
-            booking.PersonalData = personalData;
-            booking.animals = await _animalRepository.GetAnimalsByIdsAsync(booking.AnimalIds);
-
-
-
-            // Bereken de korting en totaalprijs
-            (booking.TotalPrice, booking.Discounts) = _bookingService.CalculateDiscount(booking, customer);
-            
-            TempData["Booking"] = JsonConvert.SerializeObject(booking);
-            TempData["Customer"] = JsonConvert.SerializeObject(customer);
-            return View("ConfirmBooking", booking);
-        }
 
         [HttpPost]
         public async Task<IActionResult> ConfirmBooking()
@@ -216,8 +155,8 @@ namespace BeestjeOpJeFeestje.Controllers
 
             Booking booking = new Booking
             {
-                Date = bookingViewModel.SelectedDate,
-                CustomerId = customer.Id,
+                Date = bookingViewModel!.SelectedDate,
+                CustomerId = customer!.Id,
                 Customer = customer,
                 Animals = bookingViewModel.animals,
                 TotalPrice = bookingViewModel.TotalPrice,
@@ -225,26 +164,96 @@ namespace BeestjeOpJeFeestje.Controllers
             };
             await _bookingRepository.AddAsync(booking);
             TempData.Remove("Booking");
-            TempData["booking"] = "success";
+            TempData["success"] = "success";
 
         
             return RedirectToAction("index", "home");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SubmitPersonalData(CombinedPDViewModel model)
+        {
+            BookingViewModel booking = new();
+            Customer customer = new();
+
+            if (User?.Identity?.IsAuthenticated == false)
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View("PersonalDataOrLogin", model); // Geef het formulier opnieuw weer bij fouten
+                } 
+            }
+
+            // Probeer booking uit TempData te halen
+            var bookingJson = TempData["Booking"] as string;
+            if (!string.IsNullOrEmpty(bookingJson))
+            {
+                booking = JsonConvert.DeserializeObject<BookingViewModel>(bookingJson);
+                TempData.Keep("Booking");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Er is iets fout gegaan, probeer het opnieuw";
+                return RedirectToAction("Index", "Home");
+            }
+            
+
+            // Check of de gebruiker is ingelogd
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                customer = await _customerRepository.GetCustomerByUserIdAsync(user?.Id);
+
+                if (customer != null)
+                {
+                    model.PersonalDataViewModel.Name = customer.Name;
+                    model.PersonalDataViewModel.PhoneNumber = customer.PhoneNumber;
+                    model.PersonalDataViewModel.Email = customer.Email;
+                }
+            }
+
+            // Als er geen ingelogde klant is, maak een nieuwe klant aan
+            if (customer == null)
+            {
+                customer = new Customer
+                {
+                    Name = model.PersonalDataViewModel.Name,
+                    PhoneNumber = model.PersonalDataViewModel.PhoneNumber,
+                    Email = model.PersonalDataViewModel.Email,
+                    Address = model.PersonalDataViewModel.Address,
+                    CustomerCard = CustomerCard.None
+                };
+                await _customerRepository.AddCustomerAsync(customer);
+            }
+
+            booking.PersonalData = model.PersonalDataViewModel;
+            booking.animals = await _animalRepository.GetAnimalsByIdsAsync(booking.AnimalIds);
+
+            // Bereken de korting en totaalprijs
+            (booking.TotalPrice, booking.Discounts) = _bookingService.CalculateDiscount(booking, customer);
+
+            TempData["Booking"] = JsonConvert.SerializeObject(booking);
+            TempData["Customer"] = JsonConvert.SerializeObject(customer);
+            return View("ConfirmBooking", booking);
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(CombinedPDViewModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
+            if(model.LoginViewModel.Email.IsNullOrEmpty() || model.LoginViewModel.Password.IsNullOrEmpty())
+            {
+                return RedirectToAction("PersonalDataOrLogin", model);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(model.LoginViewModel.Email, model.LoginViewModel.Password, isPersistent: false, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 return RedirectToAction("PersonalDataOrLogin");
             }
            
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View("PersonalDataOrLogin", new PersonalDataViewModel());
+            return View("PersonalDataOrLogin", model);
         }
-       
-
     }
 }

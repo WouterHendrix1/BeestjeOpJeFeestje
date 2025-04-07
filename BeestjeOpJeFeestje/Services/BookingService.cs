@@ -181,8 +181,8 @@ public class BookingService : IBookingService
                 discountDetails.Add("Geluk! 50% korting voor 'Eend'");
                 return 50m;
             }
+            discountDetails.Add("Pech, geen korting voor 'Eend'!");
         }
-        discountDetails.Add("Pech, geen korting voor 'Eend'!");
         return 0m;
     }
 
