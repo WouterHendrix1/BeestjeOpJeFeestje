@@ -51,11 +51,26 @@ namespace BeestjeOpJeFeestje.Controllers
             return View(bookings);
         }
 
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer,Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _userManager.GetUserAsync(User);
+            var booking = new Booking();
+
+            // check if user is admin
+            var roles = await _userManager.GetRolesAsync(user!);
+            if (roles.Contains("Admin"))
+            {
+                booking = await _bookingRepository.GetByIdAsync(id);
+                if (booking == null)
+                {
+                    return NotFound();
+                }
+                await _bookingRepository.DeleteAsync(id);
+                return RedirectToAction("Index");
+            }
+
             var customer = await _customerRepository.GetCustomerByUserIdAsync(user!.Id);
 
             if (customer == null)
@@ -63,7 +78,7 @@ namespace BeestjeOpJeFeestje.Controllers
                 return Unauthorized();
             }
 
-            var booking = await _bookingRepository.GetByIdAsync(id);
+            booking = await _bookingRepository.GetByIdAsync(id);
 
             if (booking == null || booking.CustomerId != customer.Id)
             {
@@ -72,7 +87,7 @@ namespace BeestjeOpJeFeestje.Controllers
 
             await _bookingRepository.DeleteAsync(id);
 
-            TempData["SuccessMessage"] = "Boeking succesvol verwijderd.";
+           
             return RedirectToAction("Index");
         }
 

@@ -6,7 +6,6 @@
 }
 <link rel="stylesheet" href="~/css/site.css" />
 
-
 @if (User.IsInRole("Admin")){
     <h2 class="my-4">Beheer Boekingen</h2>
 }else{
@@ -23,6 +22,7 @@
             {
                 <th>Klant</th>
             }
+            <th>Adres</th>
             <th>Acties</th>
             
         </tr>
@@ -48,6 +48,8 @@
                 {
                     <td>@booking.Customer.Email</td>
                 }
+                <td>
+                    @booking.Customer.Address
                 <td>
                     <form asp-action="Delete" method="post" asp-route-id="@booking.Id" onsubmit="return confirm('Weet je zeker dat je deze boeking wilt verwijderen?');">
                         <button type="submit" class="btn btn-danger">Verwijderen</button>
