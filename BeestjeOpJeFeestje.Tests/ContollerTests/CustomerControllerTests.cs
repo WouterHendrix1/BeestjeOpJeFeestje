@@ -124,8 +124,8 @@ public class CustomersControllerTests
 
         var result = await _controller.Delete(1);
 
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(customer, viewResult.Model);
+        _mockRepo.Verify(r => r.DeleteAsync(1), Times.Once);
+        Assert.IsType<RedirectToActionResult>(result);
     }
 
     [Fact]
