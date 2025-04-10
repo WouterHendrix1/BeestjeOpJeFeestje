@@ -85,14 +85,8 @@ public class CustomersController : Controller
     {
         var customer = await _customerRepository.GetByIdAsync(id);
         if (customer == null) return NotFound();
-        return View(customer);
-    }
-
-    [HttpPost, ActionName("Delete")]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        await _customerRepository.DeleteAsync(id);
-        return RedirectToAction(nameof(Index));
+        else _customerRepository.DeleteAsync(id);
+        return RedirectToAction("Index");
     }
 
     private string generatePassword()

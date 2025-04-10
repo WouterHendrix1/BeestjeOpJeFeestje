@@ -7,7 +7,7 @@
 <h2>Nieuwe klant aanmaken</h2>
 
 
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
     <div class="mb-3">
         <label asp-for="Name" class="form-label">Naam</label>
         <input asp-for="Name" class="form-control" required />
@@ -39,6 +39,9 @@
         </select>
         <span asp-validation-for="CustomerCard" class="text-danger"></span>
     </div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UserId" />
 
     <button type="submit" class="btn btn-primary">Klant bewerken</button>
     <a asp-action="Index" class="btn btn-secondary">Annuleren</a>

@@ -137,14 +137,4 @@ public class CustomersControllerTests
 
         Assert.IsType<NotFoundResult>(result);
     }
-
-    [Fact]
-    public async Task DeleteConfirmed_CallsDeleteAndRedirects()
-    {
-        var result = await _controller.DeleteConfirmed(1);
-
-        _mockRepo.Verify(r => r.DeleteAsync(1), Times.Once);
-        var redirect = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("Index", redirect.ActionName);
-    }
 }

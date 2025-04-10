@@ -59,8 +59,6 @@ namespace BeestjeOpJeFeestje.Data.Repositories
             }
         }
 
-  
-
         public async Task AddCustomerAsync(Customer customer)
         {
             await _context.Customers.AddAsync(customer);
