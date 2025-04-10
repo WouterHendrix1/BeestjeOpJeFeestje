@@ -195,7 +195,7 @@ namespace BeestjeOpJeFeestje.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return View("PersonalDataOrLogin", model); // Geef het formulier opnieuw weer bij fouten
+                    return View("PersonalDataOrLogin", model);
                 } 
             }
 
